@@ -29,6 +29,7 @@ using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Autofac.Core;
 
 namespace EmployeeManagement;
 
@@ -70,6 +71,20 @@ public class EmployeeManagementHttpApiHostModule : AbpModule
         ConfigureVirtualFileSystem(context);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
+
+        context.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(EmployeeManagementPermissions.HR.CreateEmployee, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("Permission", EmployeeManagementPermissions.HR.CreateEmployee);
+                policy.RequireClaim("Permission", EmployeeManagementPermissions.HR.EditEmployee);
+                policy.RequireClaim("Permission", EmployeeManagementPermissions.HR.DeleteEmployee);
+                policy.RequireClaim("Permission", EmployeeManagementPermissions.HR.ViewEmployee);
+                policy.RequireClaim("Permission", EmployeeManagementPermissions.Admin.CreateHR);
+            });
+        });
+
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)

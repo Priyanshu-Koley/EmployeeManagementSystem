@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 
-namespace EmployeeManagement.Employees
+namespace EmployeeManagement
 {
-    class Employee
+    public class EmployeeDto : AuditedEntityDto<Guid>
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
         public string Department { get; set; }
-
     }
 }
