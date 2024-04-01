@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace EmployeeManagement.Migrations
 {
     [DbContext(typeof(EmployeeManagementDbContext))]
-    [Migration("20240329085511_Created_Book_Entity")]
-    partial class Created_Book_Entity
+    [Migration("20240401095711_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -14,6 +14,14 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Microsoft.AspNetCore.Identity;
+using System.Data;
+using Volo.Abp;
+using System.Threading.Tasks;
+using System;
+using Volo.Abp.Authorization.Permissions;
+using EmployeeManagement.Localization;
+using Volo.Abp.PermissionManagement;
 
 namespace EmployeeManagement;
 
@@ -61,8 +69,58 @@ public class EmployeeManagementDomainModule : AbpModule
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
 
+        Configure<PermissionDefinitionContext>(options =>
+        {
+            var group = options.GetGroupOrNull("EmployeeManagement");
+            if (group == null)
+            {
+                group = options.AddGroup("EmployeeManagement", L("EmployeeManagement"));
+            }
+
+            group.AddPermission("EmployeeManagement.Create", L("Create Employee"));
+            group.AddPermission("EmployeeManagement.Edit", L("Edit Employee"));
+            group.AddPermission("EmployeeManagement.Delete", L("Delete Employee"));
+            group.AddPermission("EmployeeManagement.View", L("View Employee"));
+        });
+
 #if DEBUG
-        context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+    context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
+    }
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        var roleManager = context.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var roleExistsAdmin = await roleManager.RoleExistsAsync("ADMIN");
+        Guid AdminId = new Guid();
+        if (!roleExistsAdmin)
+        {
+            await roleManager.CreateAsync(new IdentityRole(AdminId, "ADMIN"));
+        }
+
+        var roleExistsHr = await roleManager.RoleExistsAsync("HR");
+        Guid HrId = new Guid();
+        if (!roleExistsHr)
+        {
+            await roleManager.CreateAsync(new IdentityRole(HrId, "HR"));
+        }
+
+
+        var permissionManager = context.ServiceProvider.GetRequiredService<IPermissionManager>();
+
+        var hrRole = await roleManager.FindByNameAsync("HR");
+        if (hrRole != null)
+        {
+            // Assign permissions to HR role
+            await permissionManager.SetForRoleAsync(hrRole.Name, "EmployeeManagement.Create", true);
+            await permissionManager.SetForRoleAsync(hrRole.Name, "EmployeeManagement.Edit", true);
+            await permissionManager.SetForRoleAsync(hrRole.Name, "EmployeeManagement.Delete", true);
+            await permissionManager.SetForRoleAsync(hrRole.Name, "EmployeeManagement.View", true);
+        }
+    }
+
+    private static LocalizableString L(string name)
+    {
+        return LocalizableString.Create<EmployeeManagementResource>(name);
     }
 }

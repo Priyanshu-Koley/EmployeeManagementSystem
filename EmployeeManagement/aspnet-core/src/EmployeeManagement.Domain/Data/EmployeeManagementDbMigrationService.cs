@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Polly;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
+using static Volo.Abp.Identity.Settings.IdentitySettingNames;
 
 namespace EmployeeManagement.Data;
 
@@ -23,6 +27,8 @@ public class EmployeeManagementDbMigrationService : ITransientDependency
     private readonly IEnumerable<IEmployeeManagementDbSchemaMigrator> _dbSchemaMigrators;
     private readonly ITenantRepository _tenantRepository;
     private readonly ICurrentTenant _currentTenant;
+    //EmployeeManagementDataSeederContributor _dataSeeder;
+
 
     public EmployeeManagementDbMigrationService(
         IDataSeeder dataSeeder,
@@ -34,6 +40,8 @@ public class EmployeeManagementDbMigrationService : ITransientDependency
         _dbSchemaMigrators = dbSchemaMigrators;
         _tenantRepository = tenantRepository;
         _currentTenant = currentTenant;
+
+        
 
         Logger = NullLogger<EmployeeManagementDbMigrationService>.Instance;
     }
@@ -104,6 +112,7 @@ public class EmployeeManagementDbMigrationService : ITransientDependency
             .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, IdentityDataSeedContributor.AdminEmailDefaultValue)
             .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, IdentityDataSeedContributor.AdminPasswordDefaultValue)
         );
+        //await _dataSeeder.SeedAsync();
     }
 
     private bool AddInitialMigrationIfNotExist()

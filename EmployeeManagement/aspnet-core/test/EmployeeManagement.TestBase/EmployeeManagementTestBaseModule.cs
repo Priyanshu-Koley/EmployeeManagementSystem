@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Autofac;
@@ -27,9 +28,10 @@ public class EmployeeManagementTestBaseModule : AbpModule
         context.Services.AddAlwaysAllowAuthorization();
     }
 
-    public override void OnApplicationInitialization(ApplicationInitializationContext context)
+    public override Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
     {
         SeedTestData(context);
+        return base.OnApplicationInitializationAsync(context);
     }
 
     private static void SeedTestData(ApplicationInitializationContext context)
