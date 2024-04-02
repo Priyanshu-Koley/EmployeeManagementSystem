@@ -1,0 +1,9 @@
+﻿using EmployeeManagementSystem.EntityFrameworkCore;
+using Xunit;
+
+namespace EmployeeManagementSystem.EntityFrameworkCore;
+
+public class EmployeeManagementSystemEntityFrameworkCoreCollectionFixtureBase : ICollectionFixture<EmployeeManagementSystemEntityFrameworkCoreFixture>
+{
+
+}
