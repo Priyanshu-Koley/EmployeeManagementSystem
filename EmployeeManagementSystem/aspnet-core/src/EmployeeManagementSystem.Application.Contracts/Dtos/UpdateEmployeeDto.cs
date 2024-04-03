@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Volo.Abp.Application.Dtos;
 
-namespace EmployeeManagementSystem
+namespace EmployeeManagementSystem.Dtos
 {
-    public class EmployeeDto : AuditedEntityDto<Guid>
+    public class UpdateEmployeeDto
     {
         public string Name { get; set; }
         public string Address { get; set; }
